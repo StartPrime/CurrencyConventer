@@ -1,0 +1,38 @@
+.selectionArea {
+  display: flex;
+  gap: 16px;
+
+  input {
+    max-width: 141px;
+    min-height: 45px;
+  }
+}
+
+.section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 13px;
+}
+
+.icon {
+  border: 1px solid black;
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+}
+
+.select {
+  color: #1f2261;
+  font-weight: bold;
+  font-size: 24px;
+  border: none;
+  overflow: auto;
+
+  &:focus {
+    border: none;
+  }
+}
