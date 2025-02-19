@@ -7,9 +7,18 @@ type TCurrencyValue = {
   value?: number;
 };
 
+type TPrice = {
+  firstCurrency: string;
+  firstValue: number;
+  secondCurrency: string;
+  secondValue: number;
+};
+
 function App() {
-  const [firstValue, setFirstValue] = useState<TCurrencyValue | null>(null);
+  const [firstValue, setFirstValue] = useState<TCurrencyValue | null>();
   const [secondValue, setSecondValue] = useState<TCurrencyValue | null>(null);
+  const [price, setPrice] = useState<TPrice | undefined>(undefined);
+  const [error, setError] = useState(false);
 
   function setFirstValueFunction({ code, value }: TCurrencyValue): void {
     setFirstValue({ code: code, value: value });
@@ -19,25 +28,32 @@ function App() {
     setSecondValue({ code: code, value: value });
   }
 
-  function convert(): void {
-    if (firstValue?.code && firstValue.value && secondValue?.code) {
-      const url = `https://api.freecurrencyapi.com/v1/latest?apikey=fca_live_4Osqh6qA9z8tSFv5AABgFE7qp1TvNxiXZP9F4nxZ&currencies=${
-        secondValue.code
-      }${
-        !(firstValue.code === 'USD') ? `&base_currency=${firstValue.code}` : ''
-      }`;
-      fetch(url, {
-        method: 'get',
-      })
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (data) {
-          console.log(data);
-        })
-        .catch(function (error) {
-          console.log('Request failed', error);
+  async function convert(): Promise<void> {
+    try {
+      if (firstValue?.code && firstValue.value && secondValue?.code) {
+        const url = `https://api.freecurrencyapi.com/v1/latest?apikey=fca_live_4Osqh6qA9z8tSFv5AABgFE7qp1TvNxiXZP9F4nxZ&currencies=${
+          secondValue.code
+        }${
+          !(firstValue.code === 'USD')
+            ? `&base_currency=${firstValue.code}`
+            : ''
+        }`;
+
+        const response = await fetch(url, {
+          method: 'get',
         });
+        const data = await response.json();
+
+        setPrice({
+          firstCurrency: firstValue.code,
+          firstValue: firstValue.value,
+          secondCurrency: secondValue.code,
+          secondValue: data.data[secondValue.code] * firstValue.value,
+        });
+        setError(false);
+      }
+    } catch {
+      setError(true);
     }
   }
 
@@ -51,7 +67,11 @@ function App() {
           <section className={classes.section}>
             <div>
               <p className={classes.description}>Сумма</p>
-              <SelectionArea onSelect={true} setValue={setFirstValueFunction} />
+              <SelectionArea
+                onSelect={true}
+                setValue={setFirstValueFunction}
+                price={undefined}
+              />
             </div>
             <div className={classes.rotateContainer}>
               <hr />
@@ -65,12 +85,18 @@ function App() {
               <SelectionArea
                 onSelect={false}
                 setValue={setSecondValueFunction}
+                price={price?.secondValue}
               />
             </div>
+            {error && <p className={classes.error}>Произошла ошибка</p>}
           </section>
           <div className={classes.result}>
             <p>Обменный курс</p>
-            <p>123</p>
+            {price && (
+              <p>{`${price.firstValue} ${
+                price.firstCurrency
+              } = ${price.secondValue.toFixed(6)} ${price.secondCurrency}`}</p>
+            )}
           </div>
         </div>
       </main>

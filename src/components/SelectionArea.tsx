@@ -10,9 +10,10 @@ type TCurrencyValue = {
 type Props = {
   onSelect: boolean;
   setValue: ({ code, value }: TCurrencyValue) => void;
+  price: number | undefined;
 };
 
-export default function SelectionArea({ onSelect, setValue }: Props) {
+export default function SelectionArea({ onSelect, setValue, price }: Props) {
   const [currentCurrency, setCurrentCurrency] = useState(
     currencyData[Math.floor(Math.random() * (33 - 0 + 1))],
   );
@@ -53,6 +54,7 @@ export default function SelectionArea({ onSelect, setValue }: Props) {
         </select>
       </div>
       <input
+        defaultValue={price && Math.round(price)}
         type="number"
         readOnly={!onSelect}
         onChange={(e) => {

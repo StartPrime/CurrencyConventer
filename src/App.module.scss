@@ -102,6 +102,12 @@ $maxWidth: 1000;
   }
 }
 
+.error {
+  text-align: center;
+  color: red;
+  font-weight: bold;
+}
+
 @media (max-width: 500px) {
   .rotate {
     width: 50px;
