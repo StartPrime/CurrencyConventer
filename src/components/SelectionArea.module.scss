@@ -1,10 +1,32 @@
+$maxWidth: 1000;
+@mixin adaptiv-font($pcSize, $mobSize) {
+  $addSize: $pcSize - $mobSize;
+  $maxWidth: $maxWidth - 320;
+  font-size: calc(
+    #{$mobSize + px} + #{$addSize} * ((100vw - 320px) / #{$maxWidth})
+  );
+}
+
 .selectionArea {
   display: flex;
   gap: 16px;
+  align-items: center;
 
   input {
-    max-width: 141px;
-    min-height: 45px;
+    width: 141px;
+    height: 45px;
+    border: none;
+    background-color: #efefef;
+    border-radius: 7px;
+    padding: 5px;
+    @include adaptiv-font(22, 16);
+    font-weight: bold;
+    text-align: end;
+
+    &:focus {
+      border: none;
+      outline: none;
+    }
   }
 }
 
@@ -28,11 +50,26 @@
 .select {
   color: #1f2261;
   font-weight: bold;
-  font-size: 24px;
+  @include adaptiv-font(24, 18);
   border: none;
   overflow: auto;
+  cursor: pointer;
 
   &:focus {
     border: none;
+  }
+}
+
+@media (max-width: 500px) {
+  .icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .selectionArea {
+    input {
+      width: 120px;
+      height: 35px;
+    }
   }
 }
